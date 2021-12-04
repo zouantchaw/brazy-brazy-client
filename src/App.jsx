@@ -35,9 +35,28 @@ const App = () => {
     } else {
       console.log("No authorized account found")
     }
-
   }
 
+  // connect wallet method
+  const connectWallet = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        alert("Get MetaMask!");
+        return;
+      }
+
+      // request access to account
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+
+      // print out public address
+      console.log("Connected", accounts[0]);
+      setCurrentAccount(accounts[0]);
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // Render Methods
   const renderNotConnectedContainer = () => (
@@ -60,7 +79,13 @@ const App = () => {
           <p className="sub-text">
             Each unique. Each beautiful. Discover your NFT today.
           </p>
-          {renderNotConnectedContainer()}
+          {currentAccount === "" ? (
+            renderNotConnectedContainer()
+          ) : (
+              <button onClick={null} className="cta-button connect-wallet-button">
+                Mint NFT
+            </button>
+            )}
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
