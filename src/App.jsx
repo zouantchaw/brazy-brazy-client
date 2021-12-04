@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 
@@ -9,12 +9,31 @@ const OPENSEA_LINK = '';
 const TOTAL_MINT_COUNT = 50;
 
 const App = () => {
+
+  const checkIfWalletIsConnected = () => {
+  // Check if ethereum object is present is window
+    const { ethereum } = window;
+
+    if (!ethereum) {
+      console.log("Make sure you have metamask!");
+      return;
+    } else {
+      console.log("Ethereum object is present in the window", ethereum);
+    }
+  }
+
   // Render Methods
   const renderNotConnectedContainer = () => (
     <button className="cta-button connect-wallet-button">
       Connect to Wallet
     </button>
   );
+
+  // Invoke checkIfWalletIsConnected on page load
+  useEffect(() => {
+    console.log("Page loaded")
+    checkIfWalletIsConnected();
+  }, [])
 
   return (
     <div className="App">
