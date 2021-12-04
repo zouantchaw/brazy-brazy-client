@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 import { ethers } from "ethers";
+import BrazyNFT from './utils/BrazyNFT.json';
 
 // Constants
 const TWITTER_HANDLE = 'love_thegame_';
@@ -33,6 +34,9 @@ const App = () => {
       const account = accounts[0];
       console.log("Found an authorized account:", account);
       setCurrentAccount(account)
+
+      // If user comes to app and has already had their wallet connected + authorized
+      setupEventListener()
     } else {
       console.log("No authorized account found")
     }
@@ -54,13 +58,41 @@ const App = () => {
       // print out public address
       console.log("Connected", accounts[0]);
       setCurrentAccount(accounts[0]);
+
+      // If user comes to app and has already had their wallet connected + authorized
+      setupEventListener()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const setupEventListener = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, BrazyNFT.abi, signer);
+
+        // "Capture" event when its emitted from contract
+        connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
+          console.log(from, tokenId.toNumber())
+          alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`)
+        });
+
+        console.log("Setup event listner!")
+
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
     } catch (error) {
       console.log(error)
     }
   }
 
   const askContractToMintNft = async () => {
-    const CONTRACT_ADDRESS = "0xC574827e1C708B63dDC5BB225a1bA5a76aa4A0cd"
+    const CONTRACT_ADDRESS = "0xBB7dc22b860f0a7A3c8A7197C1dF471e9106D24D"
 
     try {
       const { ethereum } = window;
