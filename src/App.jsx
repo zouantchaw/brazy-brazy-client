@@ -9,6 +9,7 @@ const TWITTER_HANDLE = 'love_thegame_';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const OPENSEA_LINK = '';
 const TOTAL_MINT_COUNT = 50;
+const CONTRACT_ADDRESS = "0xBB7dc22b860f0a7A3c8A7197C1dF471e9106D24D"
 
 const App = () => {
 
@@ -28,6 +29,14 @@ const App = () => {
 
     // Check if app can use users wallet
     const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+    let chainId = await ethereum.request({ method: "eth_chainId" });
+    console.log("Connected to chain " + chainId);
+
+    const rinkebyChainId = "0x4";
+    if ( chainId !== rinkebyChainId) {
+      alert("Your are not connected to the Rinkeby test Network!")
+    }
 
     // Since users can have multiple accounts, we grab the first one
     if (accounts.length !== 0) {
@@ -92,8 +101,6 @@ const App = () => {
   }
 
   const askContractToMintNft = async () => {
-    const CONTRACT_ADDRESS = "0xBB7dc22b860f0a7A3c8A7197C1dF471e9106D24D"
-
     try {
       const { ethereum } = window;
 
