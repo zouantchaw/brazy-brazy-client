@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
+import etherGif from './assets/etherr.gif'
 import { ethers } from "ethers";
 import BrazyNFT from './utils/BrazyNFT.json';
+import LoadingIndicator from './Components/LoadingIndicator'
 
 // Constants
 const TWITTER_HANDLE = 'love_thegame_';
@@ -17,7 +19,9 @@ const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
 
   // Minting state property
-  const [mintingCharacter, setMintingCharacter ] = useState(false);
+  const [mintingCharacter, setMintingCharacter] = useState(false);
+
+  console.log('mintingCharacter: ', mintingCharacter)
 
   const checkIfWalletIsConnected = async () => {
     // Check if ethereum object is present is window
@@ -37,7 +41,7 @@ const App = () => {
     console.log("Connected to chain " + chainId);
 
     const rinkebyChainId = "0x4";
-    if ( chainId !== rinkebyChainId) {
+    if (chainId !== rinkebyChainId) {
       alert("Your are not connected to the Rinkeby test Network!")
     }
 
@@ -115,10 +119,16 @@ const App = () => {
         console.log("Opening MetaMask to pay gas...")
         let nftTxn = await connectedContract.makeABrazyNFT();
 
+        // set mintingCharacter to true
+        setMintingCharacter(true)
+
         console.log("Mining...standby")
         await nftTxn.wait();
 
         console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+
+        // set mintingCharacter to false
+        setMintingCharacter(false)
       } else {
         console.log("Ethereum object is not present in the window.")
       }
@@ -150,11 +160,25 @@ const App = () => {
           </p>
           {currentAccount === "" ? (
             renderNotConnectedContainer()
-          ) : (
+          ) : (!mintingCharacter &&(
               <button onClick={askContractToMintNft} className="cta-button connect-wallet-button">
                 Mint NFT
             </button>
-            )}
+            ))}
+
+          {/* Show loading indicator when mintingCharacter is true */}
+          {mintingCharacter && (
+            <div className="loading">
+              <div className="indicator">
+                {/*<LoadingIndicator /> */}
+                <p className="glow">Minting In Progress...</p>
+              </div>
+              <img
+                src={etherGif}
+                alt="Minting loading indicator"
+              />
+            </div>
+          )}
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
