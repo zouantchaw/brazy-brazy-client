@@ -16,6 +16,9 @@ const App = () => {
   // State variable to store users public wallet
   const [currentAccount, setCurrentAccount] = useState("");
 
+  // Minting state property
+  const [mintingCharacter, setMintingCharacter ] = useState(false);
+
   const checkIfWalletIsConnected = async () => {
     // Check if ethereum object is present is window
     const { ethereum } = window;
