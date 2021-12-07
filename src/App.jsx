@@ -11,7 +11,7 @@ const TWITTER_HANDLE = 'love_thegame_';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const OPENSEA_LINK = '';
 const TOTAL_MINT_COUNT = 50;
-const CONTRACT_ADDRESS = "0xBB7dc22b860f0a7A3c8A7197C1dF471e9106D24D"
+const CONTRACT_ADDRESS = "0x653E5c018a00785E52d4665c94245FBE518C9fd5"
 
 const App = () => {
 
@@ -20,6 +20,9 @@ const App = () => {
 
   // Minting state property
   const [mintingCharacter, setMintingCharacter] = useState(false);
+
+  // Taost state management
+  const [showToast, setShowToast] = useState(false)
 
   console.log('mintingCharacter: ', mintingCharacter)
 
@@ -94,7 +97,7 @@ const App = () => {
         // "Capture" event when its emitted from contract
         connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
           console.log(from, tokenId.toNumber())
-          alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`)
+          // alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`)
         });
 
         console.log("Setup event listner!")
@@ -129,6 +132,12 @@ const App = () => {
 
         // set mintingCharacter to false
         setMintingCharacter(false)
+
+        // Set showToast to true and then false 5 secs later
+        setShowToast(true)
+        setTimeout(() => {
+          setShowToast(false)
+        }, 5000)
       } else {
         console.log("Ethereum object is not present in the window.")
       }
@@ -153,6 +162,12 @@ const App = () => {
   return (
     <div className="App">
       <div className="container">
+        {/* Taost Mint Message */}
+        {!mintingCharacter && (
+          <div id="toast" className={showToast ? 'show' : ''}>
+            <div id="desc">{`Minted`}</div>
+          </div>
+        )}
         <div className="header-container">
           <p className="header gradient-text">My NFT Collection</p>
           <p className="sub-text">
